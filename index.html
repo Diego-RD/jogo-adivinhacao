@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Jogo de adivinhação</title>
+
+    <style>
+      html {
+        font-family: sans-serif;
+      }
+
+      body {
+        width: 50%;
+        max-width: 800px;
+        min-width: 480px;
+        margin: 0 auto;
+      }
+      
+      .form input[type="number"] {
+        width: 200px;
+      }
+
+      .lastResult {
+        color: white;
+        padding: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Jogo de adivinhação</h1>
+
+    <p>Jogo de adivinhação voce tem 10 chances para acertar um numero de 1 a 100, a cada tentativa vou te dar um dica se o numero chutado e maior ou menor que o numero escolhido.</p>
+
+    <div class="form">
+      <label for="guessField">Digite seu chute: </label>
+      <input type="number" min="1" max="100" required id="guessField" class="guessField">
+      <input type="submit" value="Submit guess" class="guessSubmit">
+    </div>
+
+    <div class="resultParas">
+      <p class="guesses"></p>
+      <p class="lastResult"></p>
+      <p class="lowOrHi"></p>
+    </div>
+   
+
+    <script>
+
+      // aqui tem a variavel que ira selecionar um numero aleatorio
+      var numeroAleatorio = Math.floor(Math.random() * 100) + 1 ;
+
+      var palpites = document.querySelector('.guesses');
+      var ultimoResultado = document.querySelector('.lastResult');
+      var baixoOuAlto = document.querySelector('.lowOrHi');
+
+      var enviarPalpite = document.querySelector('.guessSubmit');
+      var campoPalpite = document.querySelector('.guessField');
+
+      // aqui vamos usar como parametro inicial para as funcoes que vamos criar
+      var contagemPalpites = 1;
+      var botaoReinicio;
+      campoPalpite.focus();
+
+      function conferirPalpite() {
+        var palpiteUsuario = Number(campoPalpite.value);
+        if (contagemPalpites === 1) {
+          palpites.textContent = "Palpites anteriores: ";
+        }
+        palpites.textContent += palpiteUsuario + " ";
+
+        if (palpiteUsuario === numeroAleatorio) {
+          ultimoResultado.textContent = "Parabéns! Você acertou!";
+          ultimoResultado.style.backgroundColor = "green";
+          baixoOuAlto.textContent = "";
+          configFimDeJogo();
+        } else if (contagemPalpites === 10) {
+          ultimoResultado.textContent = "!!!FIM DE JOGO!!!";
+          baixoOuAlto.textContent = "";
+          configFimDeJogo();
+        } else {
+          ultimoResultado.textContent = "Errado!";
+          ultimoResultado.style.backgroundColor = "red";
+          if (palpiteUsuario < numeroAleatorio) {
+            baixoOuAlto.textContent = "Seu palpite está muito baixo!";
+          } else if (palpiteUsuario > numeroAleatorio) {
+            baixoOuAlto.textContent = "Seu palpite está muito alto!";
+          }
+        }
+
+        contagemPalpites++;
+        campoPalpite.value = "";
+        campoPalpite.focus();
+      }
+
+      enviarPalpite.addEventListener("click", conferirPalpite);
+
+      function configFimDeJogo() {
+        campoPalpite.disabled = true;
+        enviarPalpite.disabled = true;
+        botaoReinicio = document.createElement("button");
+        botaoReinicio.textContent = "Iniciar novo jogo";
+        document.body.appendChild(botaoReinicio);
+        botaoReinicio.addEventListener("click", reiniciarJogo);
+      }
+
+
+      function reiniciarJogo() {
+        contagemPalpites = 1;
+
+        var reiniciarParas = document.querySelectorAll(".resultParas p");
+        for (var i = 0; i < reiniciarParas.length; i++) {
+          reiniciarParas[i].textContent = "";
+        }
+
+        botaoReinicio.parentNode.removeChild(botaoReinicio);
+
+        campoPalpite.disabled = false;
+        enviarPalpite.disabled = false;
+        campoPalpite.value = "";
+        campoPalpite.focus();
+
+        ultimoResultado.style.backgroundColor = "white";
+
+        numeroAleatorio = Math.floor(Math.random() * 100) + 1;
+      }
+
+
+
+    </script>
+  </body>
+</html>
